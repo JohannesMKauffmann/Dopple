@@ -1,32 +1,20 @@
 import numpy as np
-import time
-from pydub import AudioSegment
-import random
-import sys
-import io
-import os
-import glob
-import IPython
 from td_utils import *
 import matplotlib.mlab as mlab
 import matplotlib.pyplot as plt
-# To generate wav file from np array.
-from scipy.io.wavfile import write
-# %matplotlib inline
-
-# from IPython import get_ipython
-# get_ipython().run_line_magic('matplotlib', 'inline')
+# import time
 
 
-from keras.callbacks import ModelCheckpoint
 from keras.models import Model, load_model, Sequential
 from keras.layers import Dense, Activation, Dropout, Input, Masking, TimeDistributed, LSTM, Conv1D
 from keras.layers import GRU, Bidirectional, BatchNormalization, Reshape
 from keras.optimizers import Adam
 
+# from train import *
+
 # Use 1101 for 2sec input audio
-Tx = 5511 # The number of time steps input to the model from the spectrogram
-n_freq = 101 # Number of frequencies input to the model at each time step of the spectrogram
+Tx = 5511  # The number of time steps input to the model from the spectrogram
+n_freq = 101  # Number of frequencies input to the model at each time step of the spectrogram
 
 
 # Use 272 for 2sec input audio
@@ -76,14 +64,27 @@ def model(input_shape):
 
 
 model = model(input_shape = (Tx, n_freq))
-# print("hello! here I am!")
 # model.summary()
 
 opt = Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, decay=0.01)
 model.compile(loss='binary_crossentropy', optimizer=opt, metrics=["accuracy"])
 
 model = load_model('tr_model.h5')
+print("Model Loaded!")
 
+# print("Try to train")
+# activates, negatives, backgrounds = load_raw_audio()
+# x, y = create_training_example(backgrounds[0], activates, negatives)
+# x = np.reshape(x, (x.shape[0], 1, x.shape[1]))
+# model.fit(x, y, batch_size = 5, epochs=1)
+# print("Fit!")
+# print("Save model")
+# time_string = time.strftime("%m-%d-%Y-%H-%M-%S", time.localtime())
+# newModalName = time_string + '.h5'
+# model.save(newModalName)
+
+
+# model.save("saveModelTest.h5") to save an model
 
 def detect_triggerword_spectrum(x):
     """
