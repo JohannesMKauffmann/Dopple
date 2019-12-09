@@ -1,0 +1,4 @@
+mkdir activateTutorial
+pip install virtualenv
+virtualenv activateTutorial\
+activateTutorial\Scripts\activate

@@ -1,0 +1,8 @@
+numpy
+pydub
+IPython
+matplotlib
+scipy
+keras
+tensorflow
+pipwin
