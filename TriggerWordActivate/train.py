@@ -126,7 +126,7 @@ def insert_ones(y, segment_end_ms):
 
 # GRADED FUNCTION: create_training_example
 
-def create_training_example(background, activates, negatives):
+def create_training_example():
     """
     Creates a training example with a given background, activates, and negatives.
 
@@ -140,8 +140,11 @@ def create_training_example(background, activates, negatives):
     y -- the label at each time step of the spectrogram
     """
 
+    activates, negatives, backgrounds = load_raw_audio()
+
     # Set the random seed
     np.random.seed()
+    background = backgrounds[np.random.randint(0, len(backgrounds) + 1)]
 
     # Make background quieter
     background = background - 20
@@ -195,9 +198,9 @@ def create_training_example(background, activates, negatives):
 
     return x, y
 
-# activates, negatives, backgrounds = load_raw_audio()
-# x, y = create_training_example(backgrounds[0], activates, negatives)
-#
+
+
+x, y = create_training_example()
 # print(x)
 # print(y)
 
