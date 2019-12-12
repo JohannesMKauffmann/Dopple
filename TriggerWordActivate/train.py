@@ -144,15 +144,15 @@ def create_training_example():
 
     # Set the random seed
     np.random.seed()
-    background = backgrounds[np.random.randint(0, len(backgrounds) + 1)]
+    background = backgrounds[np.random.randint(0, len(backgrounds))]
 
     # Make background quieter
     background = background - 20
 
     ### START CODE HERE ###
     # Step 1: Initialize y (label vector) of zeros (≈ 1 line)
+    # y = np.zeros((1, Ty))
     y = np.zeros((1, Ty))
-
     # Step 2: Initialize segment times as empty list (≈ 1 line)
     previous_segments = []
     ### END CODE HERE ###
@@ -198,9 +198,25 @@ def create_training_example():
 
     return x, y
 
+def create_dataset():
+    X = []
+    Y = []
+    for i in range(26):
+        x, y = create_training_example()
+        # npx = np.array(x)
+        # print(npx.shape)
+        X.append(x)
+        Y.append(y)
+    np_X = np.array(X)
+    np_Y = np.array(Y)
+    print(np_X.shape)
+    print(np_Y.shape)
+    # TODO: change order from arrays, save the numpy array as .npy file. Name from .npy file is timestring
 
 
-x, y = create_training_example()
+
+# x, y = create_training_example()
 # print(x)
 # print(y)
+create_dataset()
 
