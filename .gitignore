@@ -3,3 +3,6 @@ TriggerWordActivate/AudioOut/*.wav
 
 #ignore pycache folder
 TriggerWordActivate/__pycache__
+
+#ignore vscode folder
+TriggerWordActivate/.vscode
