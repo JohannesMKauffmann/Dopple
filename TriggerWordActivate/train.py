@@ -203,8 +203,6 @@ def create_dataset():
     Y = []
     for i in range(26):
         x, y = create_training_example()
-        # npx = np.array(x)
-        # print(npx.shape)
         X.append(x)
         Y.append(y)
     np_X = np.array(X)
@@ -212,8 +210,6 @@ def create_dataset():
     print(np_X.shape)
     print(np_Y.shape)
     # TODO: change order from arrays, save the numpy array as .npy file. Name from .npy file is timestring
-
-
 
 # x, y = create_training_example()
 # print(x)
