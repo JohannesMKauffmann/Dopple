@@ -141,7 +141,7 @@ def create_training_example(background, activates, negatives):
     """
 
     # Set the random seed
-    np.random.seed(18)
+    np.random.seed()
 
     # Make background quieter
     background = background - 20
