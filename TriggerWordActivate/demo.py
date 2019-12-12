@@ -21,7 +21,7 @@ n_freq = 101  # Number of frequencies input to the model at each time step of th
 Ty = 1375# The number of time steps in the output of our model
 
 
-def model(input_shape):
+def generateModel(input_shape):
     """
     Function creating the model's graph in Keras.
 
@@ -63,7 +63,7 @@ def model(input_shape):
     return model
 
 
-model = model(input_shape = (Tx, n_freq))
+model = generateModel(input_shape = (Tx, n_freq))
 # model.summary()
 
 opt = Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, decay=0.01)

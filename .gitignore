@@ -1,0 +1,5 @@
+# ignore audio files
+TriggerWordActivate/AudioOut/*.wav
+
+#ignore pycache folder
+TriggerWordActivate/__pycache__
