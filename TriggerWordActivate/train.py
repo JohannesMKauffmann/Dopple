@@ -1,6 +1,7 @@
 import numpy as np
 from td_utils import *
-import time
+from datetime import datetime
+import os
 
 Tx = 5511 # The number of time steps input to the model from the spectrogram
 Ty = 1375 # The number of time steps in the output of our model
@@ -189,30 +190,49 @@ def create_training_example():
     background = match_target_amplitude(background, -20.0)
 
     # Export new training example
-    time_string = time.strftime("%m-%d-%Y-%H-%M-%S", time.localtime())
-    file_handle = background.export("AudioOut/" + time_string + ".wav", format="wav")
-    print("File (" + time_string + ".wav) was saved in your directory.")
+    fileName = datetime.now().strftime("%m-%d-%Y-%H-%M-%S-%f")
+    # fileName = 'export'
+    file_handle = background.export("AudioOut/" + fileName + ".wav", format="wav")
+    print("File (" + fileName + ".wav) was saved in your directory.")
 
     # Get and plot spectrogram of the new recording (background with superposition of positive and negatives)
-    x = graph_spectrogram("AudioOut/" + time_string + ".wav")
-
+    x = graph_spectrogram("AudioOut/" + fileName + ".wav")
     return x, y
 
-def create_dataset():
+def create_dataset(numberOfExamples):
     X = []
     Y = []
-    for i in range(26):
-        x, y = create_training_example()
-        X.append(x)
-        Y.append(y)
-    np_X = np.array(X)
-    np_Y = np.array(Y)
-    print(np_X.shape)
-    print(np_Y.shape)
-    # TODO: change order from arrays, save the numpy array as .npy file. Name from .npy file is timestring
+    try:
+        for i in range(numberOfExamples):
+            x, y = create_training_example() # get x and y value.
 
-# x, y = create_training_example()
-# print(x)
-# print(y)
-create_dataset()
+            x = np.swapaxes(x, 0, 1)  # swap the array
+            y = np.swapaxes(y, 0, 1)  # swap the array
+
+            X.append(x)  # add this y to the X array with the different x samples.
+            Y.append(y)  # add this y to the Y array with the different y samples.
+
+            print("Sample: " + str(i + 1))
+
+    except Exception:
+
+        print('Something went wrong!')
+
+    finally:
+        np_x = np.array(X)  # make numpy array from X
+        np_y = np.array(Y)  # make numpy array from Y
+
+        time_string = datetime.now().strftime("%m-%d-%Y-%H-%M-%S")
+        saveDirectoryName = 'ExportDataSets/' + time_string
+        os.mkdir('ExportDataSets/' + time_string)
+        np.save(saveDirectoryName + '/X.npy', np_x)
+        np.save(saveDirectoryName + '/Y.npy', np_y)
+
+        print("Dataset is saved in: " + saveDirectoryName)
+
+        print(np_x.shape)
+        print(np_y.shape)
+
+
+create_dataset(50)
 
