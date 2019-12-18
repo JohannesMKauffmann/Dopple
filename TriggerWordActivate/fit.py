@@ -1,14 +1,9 @@
 import numpy as np
-from td_utils import *
-
-
 
 from keras.models import Model, load_model, Sequential
 from keras.layers import Dense, Activation, Dropout, Input, Masking, TimeDistributed, LSTM, Conv1D
 from keras.layers import GRU, Bidirectional, BatchNormalization, Reshape
 from keras.optimizers import Adam
-
-# from train import *
 
 # Use 1101 for 2sec input audio
 Tx = 5511  # The number of time steps input to the model from the spectrogram

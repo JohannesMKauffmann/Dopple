@@ -1,5 +1,5 @@
 import numpy as np
-from td_utils import *
+from td_utils import load_raw_audio, match_target_amplitude, graph_spectrogram
 from datetime import datetime
 import os
 import sys
@@ -196,7 +196,7 @@ def create_training_example(positives, negatives, backgrounds):
     # Export new training example
     fileName = datetime.now().strftime("%m-%d-%Y-%H-%M-%S-%f")
     # fileName = 'export'
-    file_handle = background.export("AudioOut/" + fileName + ".wav", format="wav")
+    background.export("AudioOut/" + fileName + ".wav", format="wav")
     print("File (" + fileName + ".wav) was saved in your directory.")
 
     # Get and plot spectrogram of the new recording (background with superposition of positive and negatives)
