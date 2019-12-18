@@ -148,8 +148,8 @@ def create_training_example(positives, negatives, backgrounds):
     np.random.seed()
     random_int = np.random.randint(0, len(backgrounds))
     #Convert int to nunpy int
-    numpy_random_int = np.int64(random_int)
-    background = backgrounds[numpy_random_int]
+    random_int = int(random_int)
+    background = backgrounds[random_int]
 
     # Make background quieter
     background = background - 20
