@@ -2,6 +2,7 @@ import numpy as np
 from td_utils import *
 from datetime import datetime
 import os
+import sys
 
 Tx = 5511 # The number of time steps input to the model from the spectrogram
 Ty = 1375 # The number of time steps in the output of our model
@@ -145,7 +146,10 @@ def create_training_example(positives, negatives, backgrounds):
 
     # Set the random seed
     np.random.seed()
-    background = backgrounds[np.random.randint(0, len(backgrounds))]
+    random_int = np.random.randint(0, len(backgrounds))
+    #Convert int to nunpy int
+    numpy_random_int = np.int64(random_int)
+    background = backgrounds[numpy_random_int]
 
     # Make background quieter
     background = background - 20
@@ -218,6 +222,8 @@ def create_dataset(numberOfExamples):
     except Exception:
 
         print('Something went wrong!')
+        e = sys.exc_info()[0]
+        print(e)
 
     finally:
         np_x = np.array(X)  # make numpy array from X
