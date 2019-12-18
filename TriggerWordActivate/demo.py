@@ -69,22 +69,11 @@ model = generateModel(input_shape = (Tx, n_freq))
 opt = Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, decay=0.01)
 model.compile(loss='binary_crossentropy', optimizer=opt, metrics=["accuracy"])
 
-model = load_model('tr_model.h5')
+# model = load_model('tr_model.h5')
+# model = load_model('ownActivate.h5') # eigen getraind model 'activate'
+model = load_model('1000SetDopple.h5') # eigen getraind model 'hey Dopple' uit 1000SetDopple
 print("Model Loaded!")
 
-# print("Try to train")
-# activates, negatives, backgrounds = load_raw_audio()
-# x, y = create_training_example(backgrounds[0], activates, negatives)
-# x = np.reshape(x, (x.shape[0], 1, x.shape[1]))
-# model.fit(x, y, batch_size = 5, epochs=1)
-# print("Fit!")
-# print("Save model")
-# time_string = time.strftime("%m-%d-%Y-%H-%M-%S", time.localtime())
-# newModalName = time_string + '.h5'
-# model.save(newModalName)
-
-
-# model.save("saveModelTest.h5") to save an model
 
 def detect_triggerword_spectrum(x):
     """

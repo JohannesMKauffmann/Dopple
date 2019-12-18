@@ -127,7 +127,7 @@ def insert_ones(y, segment_end_ms):
 
 # GRADED FUNCTION: create_training_example
 
-def create_training_example():
+def create_training_example(positives, negatives, backgrounds):
     """
     Creates a training example with a given background, activates, and negatives.
 
@@ -141,7 +141,7 @@ def create_training_example():
     y -- the label at each time step of the spectrogram
     """
 
-    activates, negatives, backgrounds = load_raw_audio()
+    # activates = positives;
 
     # Set the random seed
     np.random.seed()
@@ -159,15 +159,15 @@ def create_training_example():
     ### END CODE HERE ###
 
     # Select 0-4 random "activate" audio clips from the entire list of "activates" recordings
-    number_of_activates = np.random.randint(0, 5)
-    random_indices = np.random.randint(len(activates), size=number_of_activates)
-    random_activates = [activates[i] for i in random_indices]
+    number_of_positives = np.random.randint(0, 5)
+    random_indices = np.random.randint(len(positives), size=number_of_positives)
+    random_positives = [positives[i] for i in random_indices]
 
     ### START CODE HERE ### (≈ 3 lines)
     # Step 3: Loop over randomly selected "activate" clips and insert in background
-    for random_activate in random_activates:
+    for random_positive in random_positives:
         # Insert the audio clip on the background
-        background, segment_time = insert_audio_clip(background, random_activate, previous_segments)
+        background, segment_time = insert_audio_clip(background, random_positive, previous_segments)
         # Retrieve segment_start and segment_end from segment_time
         segment_start, segment_end = segment_time
         # Insert labels in "y"
@@ -202,9 +202,10 @@ def create_training_example():
 def create_dataset(numberOfExamples):
     X = []
     Y = []
+    positives, negatives, backgrounds = load_raw_audio()
     try:
         for i in range(numberOfExamples):
-            x, y = create_training_example() # get x and y value.
+            x, y = create_training_example(positives, negatives, backgrounds) # get x and y value.
 
             x = np.swapaxes(x, 0, 1)  # swap the array
             y = np.swapaxes(y, 0, 1)  # swap the array
@@ -234,5 +235,5 @@ def create_dataset(numberOfExamples):
         print(np_y.shape)
 
 
-create_dataset(50)
+create_dataset(1000)
 
