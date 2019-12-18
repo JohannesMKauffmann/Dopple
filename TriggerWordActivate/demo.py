@@ -70,8 +70,8 @@ opt = Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, decay=0.01)
 model.compile(loss='binary_crossentropy', optimizer=opt, metrics=["accuracy"])
 
 # model = load_model('tr_model.h5')
-# model = load_model('ownActivate.h5') # eigen getraind model 'activate'
-model = load_model('1000SetDopple.h5') # eigen getraind model 'hey Dopple' uit 1000SetDopple
+# model = load_model('ownActivate.h5') # eigen getraind model 'activate' ownActivate.h5
+model = load_model('25ModalSietze.h5')
 print("Model Loaded!")
 
 

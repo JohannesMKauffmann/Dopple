@@ -1,8 +1,7 @@
 import numpy as np
-from td_utils import load_raw_audio, match_target_amplitude, graph_spectrogram
+from td_utils import *
 from datetime import datetime
 import os
-import sys
 
 Tx = 5511 # The number of time steps input to the model from the spectrogram
 Ty = 1375 # The number of time steps in the output of our model
@@ -146,10 +145,7 @@ def create_training_example(positives, negatives, backgrounds):
 
     # Set the random seed
     np.random.seed()
-    random_int = np.random.randint(0, len(backgrounds))
-    #Convert int to nunpy int
-    random_int = int(random_int)
-    background = backgrounds[random_int]
+    background = backgrounds[np.random.randint(0, len(backgrounds))]
 
     # Make background quieter
     background = background - 20
@@ -196,7 +192,7 @@ def create_training_example(positives, negatives, backgrounds):
     # Export new training example
     fileName = datetime.now().strftime("%m-%d-%Y-%H-%M-%S-%f")
     # fileName = 'export'
-    background.export("AudioOut/" + fileName + ".wav", format="wav")
+    file_handle = background.export("AudioOut/" + fileName + ".wav", format="wav")
     print("File (" + fileName + ".wav) was saved in your directory.")
 
     # Get and plot spectrogram of the new recording (background with superposition of positive and negatives)
@@ -222,8 +218,6 @@ def create_dataset(numberOfExamples):
     except Exception:
 
         print('Something went wrong!')
-        e = sys.exc_info()[0]
-        print(e)
 
     finally:
         np_x = np.array(X)  # make numpy array from X
@@ -241,5 +235,5 @@ def create_dataset(numberOfExamples):
         print(np_y.shape)
 
 
-create_dataset(1000)
+create_dataset(25)
 

@@ -1,9 +1,14 @@
 import numpy as np
+from td_utils import *
+
+
 
 from keras.models import Model, load_model, Sequential
 from keras.layers import Dense, Activation, Dropout, Input, Masking, TimeDistributed, LSTM, Conv1D
 from keras.layers import GRU, Bidirectional, BatchNormalization, Reshape
 from keras.optimizers import Adam
+
+# from train import *
 
 # Use 1101 for 2sec input audio
 Tx = 5511  # The number of time steps input to the model from the spectrogram
@@ -57,12 +62,12 @@ def generateModel(input_shape):
 
 
 model = generateModel(input_shape = (Tx, n_freq))
-# model.summary()
+model.summary()
 
 opt = Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, decay=0.01)
 model.compile(loss='binary_crossentropy', optimizer=opt, metrics=["accuracy"])
-
-setDirectory = '1000Set'
+model = load_model('25ModalSietze.h5')
+setDirectory = '25SetSietze'
 
 X = np.load('ExportDataSets/' + setDirectory + '/X.npy')
 Y = np.load('ExportDataSets/' + setDirectory + '/Y.npy')
@@ -70,10 +75,10 @@ Y = np.load('ExportDataSets/' + setDirectory + '/Y.npy')
 print(X.shape)
 print(Y.shape)
 
-print("Try to train")
+print("Train!")
 
-model.fit(X, Y, batch_size = 5, epochs=10)
+model.fit(X, Y, batch_size = 5, epochs=5)
 print("Fit!")
 
 print("Save model")
-model.save('1000SetModal.h5')
+model.save('25ModalSietze1.h5')
