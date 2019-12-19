@@ -207,9 +207,12 @@ def create_dataset(numberOfThousends):
 
     os.mkdir(saveDirectoryName)
 
-    for i in range(numberOfThousends):
+    for iteration in range(numberOfThousends):
         X = []
         Y = []
+
+        saveDirectoryPartOfSet = saveDirectoryName + '/' + str(iteration + 1)
+        os.mkdir(saveDirectoryPartOfSet)
 
         for i in range(1000):
             x, y = create_training_example(positives, negatives, backgrounds) # get x and y value.
@@ -230,8 +233,7 @@ def create_dataset(numberOfThousends):
         np_x = np.array(X)  # make numpy array from X
         np_y = np.array(Y)  # make numpy array from Y
 
-        saveDirectoryPartOfSet = saveDirectoryName + '/' + str(i + 1)
-        os.mkdir(saveDirectoryPartOfSet)
+
         np.save(saveDirectoryPartOfSet + '/X.npy', np_x)
         np.save(saveDirectoryPartOfSet + '/Y.npy', np_y)
 
