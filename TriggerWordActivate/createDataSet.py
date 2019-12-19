@@ -199,12 +199,19 @@ def create_training_example(positives, negatives, backgrounds):
     x = graph_spectrogram("AudioOut/" + fileName + ".wav")
     return x, y
 
-def create_dataset(numberOfExamples):
-    X = []
-    Y = []
+def create_dataset(numberOfThousends):
     positives, negatives, backgrounds = load_raw_audio()
-    try:
-        for i in range(numberOfExamples):
+
+    time_string = datetime.now().strftime("%m-%d-%Y-%H-%M-%S")
+    saveDirectoryName = 'ExportDataSets/' + time_string
+
+    os.mkdir(saveDirectoryName)
+
+    for i in range(numberOfThousends):
+        X = []
+        Y = []
+
+        for i in range(1000):
             x, y = create_training_example(positives, negatives, backgrounds) # get x and y value.
 
             x = np.swapaxes(x, 0, 1)  # swap the array
@@ -215,25 +222,24 @@ def create_dataset(numberOfExamples):
 
             print("Sample: " + str(i + 1))
 
-    except Exception:
+
 
         print('Something went wrong!')
 
-    finally:
+
         np_x = np.array(X)  # make numpy array from X
         np_y = np.array(Y)  # make numpy array from Y
 
-        time_string = datetime.now().strftime("%m-%d-%Y-%H-%M-%S")
-        saveDirectoryName = 'ExportDataSets/' + time_string
-        os.mkdir('ExportDataSets/' + time_string)
-        np.save(saveDirectoryName + '/X.npy', np_x)
-        np.save(saveDirectoryName + '/Y.npy', np_y)
+        saveDirectoryPartOfSet = saveDirectoryName + '/' + str(i + 1)
+        os.mkdir(saveDirectoryPartOfSet)
+        np.save(saveDirectoryPartOfSet + '/X.npy', np_x)
+        np.save(saveDirectoryPartOfSet + '/Y.npy', np_y)
 
-        print("Dataset is saved in: " + saveDirectoryName)
+        print("Dataset is saved in: " + saveDirectoryPartOfSet)
 
         print(np_x.shape)
         print(np_y.shape)
 
 
-create_dataset(25)
+create_dataset(4)
 
