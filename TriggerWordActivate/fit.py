@@ -1,12 +1,19 @@
 import numpy as np
 from td_utils import *
 
+import tensorflow as tf
+import keras
+import os
 
+# config = tf.ConfigProto( device_count = {'GPU': 1 , 'CPU': 4} )
+# sess = tf.Session(config=config)
+# keras.backend.set_session(sess)
 
 from keras.models import Model, load_model, Sequential
 from keras.layers import Dense, Activation, Dropout, Input, Masking, TimeDistributed, LSTM, Conv1D
 from keras.layers import GRU, Bidirectional, BatchNormalization, Reshape
 from keras.optimizers import Adam
+
 
 # from train import *
 
@@ -66,11 +73,18 @@ model.summary()
 
 opt = Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, decay=0.01)
 model.compile(loss='binary_crossentropy', optimizer=opt, metrics=["accuracy"])
-model = load_model('25ModalSietze.h5')
-setDirectory = '25SetSietze'
+# model = load_model('25ModalSietze.h5')
 
-X = np.load('ExportDataSets/' + setDirectory + '/X.npy')
-Y = np.load('ExportDataSets/' + setDirectory + '/Y.npy')
+setDirectory = '12-30-2019-14-33-30'
+X = np.load('ExportDataSets/' + setDirectory + '/0/X.npy')
+Y = np.load('ExportDataSets/' + setDirectory + '/0/Y.npy')
+
+for i in range(len(os.listdir('ExportDataSets/' + setDirectory))-1):
+    x = np.load('ExportDataSets/' + setDirectory + '/' + str(i+1) + '/X.npy')
+    y = np.load('ExportDataSets/' + setDirectory + '/' + str(i+1) + '/Y.npy')
+
+    X = np.concatenate((X, x), axis=0)
+    Y = np.concatenate((Y, y), axis=0)
 
 print(X.shape)
 print(Y.shape)
@@ -81,4 +95,4 @@ model.fit(X, Y, batch_size = 5, epochs=5)
 print("Fit!")
 
 print("Save model")
-model.save('25ModalSietze1.h5')
+model.save('Dopple4000Set.h5')

@@ -206,14 +206,12 @@ def create_dataset(numberOfThousends):
     saveDirectoryName = 'ExportDataSets/' + time_string
 
     os.mkdir(saveDirectoryName)
-
     for iteration in range(numberOfThousends):
         X = []
         Y = []
 
-        saveDirectoryPartOfSet = saveDirectoryName + '/' + str(iteration + 1)
+        saveDirectoryPartOfSet = saveDirectoryName + '/' + str(iteration)
         os.mkdir(saveDirectoryPartOfSet)
-
         for i in range(1000):
             x, y = create_training_example(positives, negatives, backgrounds) # get x and y value.
 
@@ -224,11 +222,6 @@ def create_dataset(numberOfThousends):
             Y.append(y)  # add this y to the Y array with the different y samples.
 
             print("Sample: " + str(i + 1))
-
-
-
-        print('Something went wrong!')
-
 
         np_x = np.array(X)  # make numpy array from X
         np_y = np.array(Y)  # make numpy array from Y
