@@ -1,79 +1,11 @@
 import numpy as np
 from td_utils import *
 import matplotlib.mlab as mlab
-import matplotlib.pyplot as plt
-# import time
 
+from keras.models import load_model
 
-from keras.models import Model, load_model, Sequential
-from keras.layers import Dense, Activation, Dropout, Input, Masking, TimeDistributed, LSTM, Conv1D
-from keras.layers import GRU, Bidirectional, BatchNormalization, Reshape
-from keras.optimizers import Adam
-
-# from train import *
-
-# Use 1101 for 2sec input audio
-Tx = 5511  # The number of time steps input to the model from the spectrogram
-n_freq = 101  # Number of frequencies input to the model at each time step of the spectrogram
-
-
-# Use 272 for 2sec input audio
-Ty = 1375# The number of time steps in the output of our model
-
-
-def generateModel(input_shape):
-    """
-    Function creating the model's graph in Keras.
-
-    Argument:
-    input_shape -- shape of the model's input data (using Keras conventions)
-
-    Returns:
-    model -- Keras model instance
-    """
-
-    X_input = Input(shape=input_shape)
-
-    ### START CODE HERE ###
-
-    # Step 1: CONV layer (≈4 lines)
-    X = Conv1D(filters=196, kernel_size=15, strides=4)(X_input)  # CONV1D
-    X = BatchNormalization()(X)  # Batch normalization
-    X = Activation('relu')(X)  # ReLu activation
-    X = Dropout(0.8)(X)  # dropout (use 0.8)
-
-    # Step 2: First GRU Layer (≈4 lines)
-    X = GRU(units=128, return_sequences=True)(X)  # GRU (use 128 units and return the sequences)
-    X = Dropout(0.8)(X)  # dropout (use 0.8)
-    X = BatchNormalization()(X)  # Batch normalization
-
-    # Step 3: Second GRU Layer (≈4 lines)
-    X = GRU(units=128, return_sequences=True)(X)  # GRU (use 128 units and return the sequences)
-    X = Dropout(0.8)(X)  # dropout (use 0.8)
-    X = BatchNormalization()(X)  # Batch normalization
-    X = Dropout(0.8)(X)  # dropout (use 0.8)
-
-    # Step 4: Time-distributed dense layer (≈1 line)
-    X = TimeDistributed(Dense(1, activation="sigmoid"))(X)  # time distributed  (sigmoid)
-
-    ### END CODE HERE ###
-
-    model = Model(inputs=X_input, outputs=X)
-
-    return model
-
-
-model = generateModel(input_shape = (Tx, n_freq))
-# model.summary()
-
-opt = Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, decay=0.01)
-model.compile(loss='binary_crossentropy', optimizer=opt, metrics=["accuracy"])
-
-model = load_model('tr_model.h5')
-# model = load_model('ownActivate.h5') # eigen getraind model 'activate' ownActivate.h5
-# model = load_model('25ModalSietze.h5')
-print("Model Loaded!")
-
+import pyaudio
+from queue import Queue
 
 def detect_triggerword_spectrum(x):
     """
@@ -120,17 +52,6 @@ def has_new_triggerword(predictions, chunk_duration, feed_duration, threshold=0.
     return False
 
 
-chunk_duration = 0.5 # Each read length in seconds from mic.
-fs = 44100 # sampling rate for mic
-chunk_samples = int(fs * chunk_duration) # Each read length in number of samples.
-
-# Each model input data duration in seconds, need to be an integer numbers of chunk_duration
-feed_duration = 10
-feed_samples = int(fs * feed_duration)
-
-assert feed_duration/chunk_duration == int(feed_duration/chunk_duration)
-
-
 def get_spectrogram(data):
     """
     Function to compute a spectrogram.
@@ -152,28 +73,6 @@ def get_spectrogram(data):
     return pxx
 
 
-def plt_spectrogram(data):
-    """
-    Function to compute and plot a spectrogram.
-
-    Argument:
-    predictions -- one channel / dual channel audio data as numpy array
-
-    Returns:
-    pxx -- spectrogram, 2-D array, columns are the periodograms of successive segments.
-    """
-    nfft = 200  # Length of each window segment
-    fs = 8000  # Sampling frequencies
-    noverlap = 120  # Overlap between windows
-    nchannels = data.ndim
-    if nchannels == 1:
-        pxx, _, _, _ = plt.specgram(data, nfft, fs, noverlap=noverlap)
-    elif nchannels == 2:
-        pxx, _, _, _ = plt.specgram(data[:, 0], nfft, fs, noverlap=noverlap)
-    return pxx
-
-
-
 def get_audio_input_stream(callback):
     stream = pyaudio.PyAudio().open(
         format=pyaudio.paInt16,
@@ -186,35 +85,13 @@ def get_audio_input_stream(callback):
     return stream
 
 
-import pyaudio
-from queue import Queue
-from threading import Thread
-import sys
-import time
-
-# Queue to communiate between the audio callback and main thread
-q = Queue()
-
-run = True
-
-silence_threshold = 100
-
-# Run the demo for a timeout seconds
-timeout = time.time() + 0.5 * 60  # 0.5 minutes from now
-
-# Data buffer for the input wavform
-data = np.zeros(feed_samples, dtype='int16')
-
-
 def callback(in_data, frame_count, time_info, status):
-    global run, timeout, data, silence_threshold
-    if time.time() > timeout:
-        run = False
+    global data, silence_threshold
     data0 = np.frombuffer(in_data, dtype='int16')
     if np.abs(data0).mean() < silence_threshold:
         # sys.stdout.write('-')
         print('-')
-        return (in_data, pyaudio.paContinue)
+        return in_data, pyaudio.paContinue
     else:
         # sys.stdout.write('.')
         print('.')
@@ -223,26 +100,46 @@ def callback(in_data, frame_count, time_info, status):
         data = data[-feed_samples:]
         # Process data async by sending a queue.
         q.put(data)
-    return (in_data, pyaudio.paContinue)
+    return in_data, pyaudio.paContinue
 
+
+#  load model.
+model = load_model('models/tr_model.h5')
+
+chunk_duration = 0.5  # Each read length in seconds from mic.
+fs = 44100  # sampling rate for mic
+chunk_samples = int(fs * chunk_duration)  # Each read length in number of samples.
+
+# Each model input data duration in seconds, need to be an integer numbers of chunk_duration
+feed_duration = 10
+feed_samples = int(fs * feed_duration)
+
+assert feed_duration/chunk_duration == int(feed_duration/chunk_duration)
+
+# Queue to communicate between the audio callback and main thread
+q = Queue()
+
+run = True
+
+silence_threshold = 100
+
+# Data buffer for the input wavform
+data = np.zeros(feed_samples, dtype='int16')
 
 stream = get_audio_input_stream(callback)
 stream.start_stream()
 
 try:
-    while run:
+    while True:
         data = q.get()
         spectrum = get_spectrogram(data)
         preds = detect_triggerword_spectrum(spectrum)
         new_trigger = has_new_triggerword(preds, chunk_duration, feed_duration)
         if new_trigger:
-            # sys.stdout.write('1')
-            print('activate')
+            print('Triggered!')
 except (KeyboardInterrupt, SystemExit):
     stream.stop_stream()
     stream.close()
-    timeout = time.time()
-    run = False
 
 stream.stop_stream()
 stream.close()
