@@ -212,7 +212,7 @@ def create_dataset(numberOfThousends):
 
         saveDirectoryPartOfSet = saveDirectoryName + '/' + str(iteration)
         os.mkdir(saveDirectoryPartOfSet)
-        for i in range(1000):
+        for i in range(256):
             x, y = create_training_example(positives, negatives, backgrounds) # get x and y value.
 
             x = np.swapaxes(x, 0, 1)  # swap the array
@@ -236,5 +236,5 @@ def create_dataset(numberOfThousends):
         print(np_y.shape)
 
 
-create_dataset(4)
+create_dataset(2) #param: het aantal mappen met 1000 samples.
 
