@@ -105,6 +105,7 @@ def callback(in_data, frame_count, time_info, status):
 
 #  load model.
 model = load_model('models/tr_model.h5')
+# model = load_model('models/nieuwModel.h5')
 
 chunk_duration = 0.5  # Each read length in seconds from mic.
 fs = 44100  # sampling rate for mic
