@@ -101,4 +101,4 @@ def train_existing_model_further(X, Y, bath_size, epochs, optimizer, newModelNam
 X, Y = loadDataSet('DataSet')
 opt = Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, decay=0.01)
 # train_existing_model_further(X, Y, 32, 2000, opt, "256_32_3000+2000_0001_further.h5", "256_32_3000_0001.h5")
-trainModel(X, Y, 75, 5, opt, 'nieuwModel.h5')
+trainModel(X, Y, 75, 2, opt, 'nieuwModel.h5')
