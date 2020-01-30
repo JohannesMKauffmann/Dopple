@@ -94,7 +94,7 @@ def train_existing_model_further(X, Y, bath_size, epochs, optimizer, newModelNam
     model = load_model(existingModelName)
     model.compile(loss='binary_crossentropy', optimizer=optimizer, metrics=["accuracy"])
     model.fit(X, Y, batch_size=bath_size, epochs=epochs)
-    model.save("models/" + modelName)
+    model.save("models/" + newModelName)
     print('model: ' + newModelName + ' saved')
     print(datetime.datetime.now())
 
